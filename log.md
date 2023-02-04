@@ -26,3 +26,11 @@ The error handling also leaves something to be desired. I am currently just usin
 Sometimes, there will be a template that doesn't have content directly. Something like a `base.html` which is extended by other templates. In that case, you just don't render any pages for that template, and let tera handle the extending.
 
 Also, I should write some tests.
+
+# 05-02-2022
+
+Error handling is better now. It's question marks all the way to the main function. It required some boilerplate deriving `From` for all the inner error types. But it makes sense doing this in an application project. Maybe some time I will learn more about anyhow and use it better.
+
+I also refactored everything and now that I have done some tidying I am ready to continue implementing `favia build`.
+
+One thing that is bugging me, is how to cross reference frontmatter. Sometimes you'll want to include other files' frontmatter into a different template. Say you have a blog, and you want a home page with a list of blog posts. You would need to somehow grab the frontmatter from all those blog posts. How to do that? One idea I have been toying with is adding a special toml field called "references". In `index.md` you could add `references = "blog"`. Which would then allow you to access the frontmatter from the files in `blog` in the `index.html` template, and iterate over them, or something like that. Sounds like a mission... but doable. I am definitely not there yet, and still need to get the basic build functionality working.
