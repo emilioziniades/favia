@@ -255,7 +255,6 @@ dependencies = [
  "clap",
  "log",
  "markdown",
- "serde",
  "simplelog",
  "tera",
  "toml",

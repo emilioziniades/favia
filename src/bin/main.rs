@@ -1,28 +1,3 @@
-//! # favia
-//! a lightweight, zero-config, tailwind-built-in, static site generator.
-//!
-//! ## api
-//! There are only two commands:
-//!
-//! `favia build` builds a bundle of html and css to be served
-//!
-//! `favia dev` runs a development server listening for changes and rebuilding
-//!
-//! ## project structure
-//!
-//! A favia project has only two directories
-//!
-//! - `content`
-//!
-//! - `templates`
-//!
-//! `content` contains a tree of subdirectories and/or markdown files, optionally with TOML frontmatter.
-//!
-//! `templates` contains a tree of subdirectories and/or [Tera](https://tera.netlify.app/) templates.
-//!
-//! favia determines the site structure from these two folders.
-//!
-//!
 use std::process;
 
 use clap::{Arg, ArgAction, Command};
