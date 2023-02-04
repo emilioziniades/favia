@@ -1,6 +1,6 @@
 +++
-test = "Emilio"
-list = [1,2,3,4,5]
+name = "Emilio"
+pets = ["Layla", "Fleur", "Ivy", "Astro"]
 +++
 
-Hello there!
+This is some `markdown` content that will be rendered as `html`. Here are the names of some of my pets.
