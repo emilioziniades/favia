@@ -23,6 +23,8 @@
 //! favia determines the site structure from these two folders.
 //!
 //!
+use std::process;
+
 use clap::{Arg, ArgAction, Command};
 use log::{debug, error, info, trace, warn, LevelFilter};
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode};
@@ -51,8 +53,11 @@ fn main() {
     error!("an error log");
 
     match matches.subcommand() {
-        Some(("dev", _)) => dev(),
-        Some(("build", _)) => build(),
+        Some(("dev", _)) => favia::dev(),
+        Some(("build", _)) => favia::build().unwrap_or_else(|err| {
+            error!("{err:#?}");
+            process::exit(1);
+        }),
         _ => unreachable!(),
     }
 }
@@ -75,12 +80,4 @@ fn cli() -> Command {
         .subcommand(
             Command::new("build").about("build the site into static html and css to be served"),
         )
-}
-
-fn dev() {
-    info!("development server starting")
-}
-
-fn build() {
-    info!("building site")
 }
