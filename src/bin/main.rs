@@ -1,7 +1,7 @@
 use std::process;
 
 use clap::{Arg, ArgAction, Command};
-use log::{debug, error, info, trace, warn, LevelFilter};
+use log::{error, LevelFilter};
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode};
 
 fn main() {
@@ -19,18 +19,13 @@ fn main() {
         TerminalMode::Mixed,
         ColorChoice::Auto,
     )
-    .expect("valid logging config");
-
-    info!("an info log");
-    debug!("a debug log");
-    trace!("a trace log");
-    warn!("a warn log");
-    error!("an error log");
+    .unwrap();
 
     match matches.subcommand() {
         Some(("dev", _)) => favia::dev(),
         Some(("build", _)) => favia::build().unwrap_or_else(|err| {
             error!("{err:#?}");
+            error!("{err}");
             process::exit(1);
         }),
         _ => unreachable!(),
