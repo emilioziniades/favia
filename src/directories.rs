@@ -2,13 +2,13 @@ use crate::error::Error;
 use log::debug;
 use std::{env, fs, io, path};
 
-pub struct Dirs {
+pub struct Directories {
     pub templates: path::PathBuf,
     pub content: path::PathBuf,
     pub build: path::PathBuf,
 }
 
-impl Dirs {
+impl Directories {
     pub fn new() -> Result<Self, Error> {
         let cwd = env::current_dir()?;
         debug!("working directory: {cwd:?}");

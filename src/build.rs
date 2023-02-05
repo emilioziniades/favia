@@ -1,4 +1,4 @@
-use crate::directories::Dirs;
+use crate::directories::Directories;
 use crate::error::Error;
 use crate::markdown::Markdown;
 use log::{debug, info};
@@ -7,7 +7,7 @@ use tera::Tera;
 
 pub fn build() -> Result<(), Error> {
     info!("building site");
-    let dirs = Dirs::new()?;
+    let dirs = Directories::new()?;
 
     let tera = Tera::new(dirs.templates.join("**").join("*").to_str().unwrap())?;
 
