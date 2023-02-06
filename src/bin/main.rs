@@ -2,24 +2,23 @@ use std::process;
 
 use clap::{Arg, ArgAction, Command};
 use log::{error, LevelFilter};
-use simplelog::{ColorChoice, Config, TermLogger, TerminalMode};
+use simplelog::{ColorChoice, ConfigBuilder, TermLogger, TerminalMode};
 
 fn main() {
     let matches = cli().get_matches();
 
     let log_level = match matches.get_count("verbose") {
-        2 => LevelFilter::Trace,
+        0 => LevelFilter::Info,
         1 => LevelFilter::Debug,
-        _ => LevelFilter::Info,
+        _ => LevelFilter::Trace,
     };
 
-    TermLogger::init(
-        log_level,
-        Config::default(),
-        TerminalMode::Mixed,
-        ColorChoice::Auto,
-    )
-    .unwrap();
+    let config = ConfigBuilder::new()
+        .add_filter_ignore_str("markdown::tokenizer")
+        .add_filter_ignore_str("globset")
+        .build();
+
+    TermLogger::init(log_level, config, TerminalMode::Mixed, ColorChoice::Auto).unwrap();
 
     match matches.subcommand() {
         Some(("dev", _)) => favia::dev(),
