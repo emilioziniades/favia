@@ -1,6 +1,11 @@
 use crate::error::Error;
 use log::debug;
-use std::{env, fs, io, path};
+use std::{
+    env,
+    ffi::OsString,
+    fs, io,
+    path::{self, Path, PathBuf},
+};
 
 pub struct Directories {
     pub templates: path::PathBuf,
@@ -38,5 +43,20 @@ impl Directories {
             content,
             build,
         })
+    }
+
+    pub fn template_name(&self, content_path: &Path) -> OsString {
+        // TODO: this assumes content and template files are flat directories
+        // TODO: this assumes a 1-to-1 mapping of template to content
+        content_path
+            .with_extension("html")
+            .file_name()
+            .unwrap()
+            .to_owned()
+    }
+
+    pub fn build_name(&self, template_name: &str) -> PathBuf {
+        // TODO this assumes build folder is flat
+        self.build.join(template_name)
     }
 }

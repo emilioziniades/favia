@@ -1,8 +1,8 @@
 use crate::directories::Directories;
 use crate::error::Error;
 use crate::markdown::Markdown;
-use log::{debug, info};
-use std::fs;
+use log::{debug, info, trace};
+use std::{fs, io};
 use tera::Tera;
 
 pub fn build() -> Result<(), Error> {
@@ -11,20 +11,43 @@ pub fn build() -> Result<(), Error> {
 
     let tera = Tera::new(dirs.templates.join("**").join("*").to_str().unwrap())?;
 
-    // TODO: instead of just reading index.html and index.md,
-    // recurse through both directories and pair 1-1 or 1-many
-    // templates to markdown files
+    // TODO: handle nested case - this assumes flat content directory
 
-    let index_html = tera.get_template_names().next().unwrap();
-    let index_markdown = dirs.content.join(index_html).with_extension("md");
-    let index_markdown = fs::read_to_string(index_markdown)?;
-    let markdown: Markdown = index_markdown.try_into()?;
-    debug!("markdown: {markdown:#?}");
-    let context = tera::Context::from(markdown);
-    debug!("{context:#?}");
+    for dir_item in fs::read_dir(&dirs.content)? {
+        let content_path = dir_item?.path();
 
-    let index = fs::File::create(dirs.build.join(index_html))?;
-    tera.render_to(index_html, &context, index)?;
+        if content_path.is_dir() {
+            // TODO what about here???
+            // for now it's fine, until we need to consider nested directories
+            continue;
+        }
+        debug!("building content file: {content_path:?}");
+        let template_name = dirs.template_name(&content_path);
+
+        let template_name = tera
+            .get_template_names()
+            .find(|name| name == &template_name);
+
+        let template_name = match template_name {
+            Some(name) => name,
+            None => {
+                return Err(
+                    io::Error::new(io::ErrorKind::NotFound, format!("{template_name:?}")).into(),
+                )
+            }
+        };
+
+        let content_data: Markdown = fs::read_to_string(content_path)?.try_into()?;
+        trace!("parsed markdown: {content_data:#?}");
+
+        let context = tera::Context::from(content_data);
+        trace!("tera context: {context:#?}");
+
+        let build_name = dirs.build_name(template_name);
+        let build_file = fs::File::create(build_name)?;
+
+        tera.render_to(template_name, &context, build_file)?;
+    }
 
     Ok(())
 }

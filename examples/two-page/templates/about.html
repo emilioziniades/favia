@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %} {{ fm.page_title }} {% endblock title %}
+
+{% block content %}
+<h1>{{ fm.page_title }}</h1>
+<h2>{{ fm.skills_title }}</h2>
+<table>
+<tr>
+  <th> Skill </th>
+  <th> Examples </th>
+</tr>
+{% for skill, examples in fm.skills %}
+<tr>
+  <td> {{ skill | capitalize }} </td>
+  <td> {{ examples}} </td>
+</tr>
+{% endfor %}
+</table>
+<h2>{{ fm.blurb_title }}</h2>
+{{ content | safe }} {% endblock content %}
