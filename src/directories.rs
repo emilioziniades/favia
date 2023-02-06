@@ -1,7 +1,6 @@
 use crate::error::Error;
 use log::debug;
 use std::{
-    env,
     ffi::OsString,
     fs, io,
     path::{self, Path, PathBuf},
@@ -14,8 +13,7 @@ pub struct Directories {
 }
 
 impl Directories {
-    pub fn new() -> Result<Self, Error> {
-        let cwd = env::current_dir()?;
+    pub fn new(cwd: PathBuf) -> Result<Self, Error> {
         debug!("working directory: {cwd:?}");
 
         let templates = cwd.join("templates");

@@ -40,3 +40,7 @@ One thing that is bugging me, is how to cross reference frontmatter. Sometimes y
 Got a little stuck on error handling. Each depdendency has its own way of representing errors, and it's a trade-off between lots of boilerplate to extract all the details, vs just passing on the higher error without any context. Ideally I'd like to present nice, contextful errors. For development purposes I am just doing `error!("{error:?})` and that is good enough. Trying to not get too stuck up on that detail.
 
 I have generalized the `build` command further. Instead of only building `index.html`, it can now build any number of templates. However, it can't handle nested content structures, which is what's next.
+
+Working on the one-to-many case where one template should create many blog posts. I decided to take an hour and write an integration test, which does an end-to-end test of the build command and checks that the correct files were outputted.
+
+I have immediately realized a problem with this zero-config approach. Consider `content/blog` which has many blog posts. You may want `blog.html`, a page with a list of all your blog posts. But, you also want a page for each individual blog post. There needs to be some convention for how to refer to each. NextJs has a pretty neat way of doing this. You put the blog list page in `templates/blog/index.html` and the individual blog pages at `templates/blog/[frontmatter-item-to-be-the-slug].html`. That works pretty well. And it will force me to consider the case of nested files in `content`.

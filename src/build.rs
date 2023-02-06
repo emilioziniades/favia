@@ -2,12 +2,12 @@ use crate::directories::Directories;
 use crate::error::Error;
 use crate::markdown::Markdown;
 use log::{debug, info, trace};
-use std::{fs, io};
+use std::{fs, io, path::PathBuf};
 use tera::Tera;
 
-pub fn build() -> Result<(), Error> {
+pub fn build(cwd: PathBuf) -> Result<(), Error> {
     info!("building site");
-    let dirs = Directories::new()?;
+    let dirs = Directories::new(cwd)?;
 
     let tera = Tera::new(dirs.templates.join("**").join("*").to_str().unwrap())?;
 

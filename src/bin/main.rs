@@ -1,4 +1,4 @@
-use std::process;
+use std::{env, process};
 
 use clap::{Arg, ArgAction, Command};
 use log::{error, LevelFilter};
@@ -20,9 +20,11 @@ fn main() {
 
     TermLogger::init(log_level, config, TerminalMode::Mixed, ColorChoice::Auto).unwrap();
 
+    let cwd = env::current_dir().unwrap();
+
     match matches.subcommand() {
         Some(("dev", _)) => favia::dev(),
-        Some(("build", _)) => favia::build().unwrap_or_else(|err| {
+        Some(("build", _)) => favia::build(cwd).unwrap_or_else(|err| {
             error!("{err:#?}");
             error!("{err}");
             process::exit(1);
