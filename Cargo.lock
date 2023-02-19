@@ -260,6 +260,7 @@ dependencies = [
  "simplelog",
  "tera",
  "toml",
+ "walkdir",
 ]
 
 [[package]]

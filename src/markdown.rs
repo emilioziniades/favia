@@ -6,6 +6,14 @@ pub struct Markdown {
     content: String,
 }
 
+impl Markdown {
+    pub fn get_value(&self, key: &str) -> Result<&toml::Value, Error> {
+        self.frontmatter
+            .get(key)
+            .ok_or(Error::Favia(format!("key {key} not found")))
+    }
+}
+
 impl TryFrom<String> for Markdown {
     type Error = Error;
 

@@ -12,6 +12,7 @@ simplelog = "^0.12.0"
 tera = "1"
 markdown = "=1.0.0-alpha.5"
 toml = "0.7.1"
+walkdir = "2"
 
 [dev-dependencies]
 mktemp = "0.5.0"

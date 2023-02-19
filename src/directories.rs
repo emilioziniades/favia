@@ -1,7 +1,6 @@
 use crate::error::Error;
 use log::debug;
 use std::{
-    ffi::OsString,
     fs, io,
     path::{self, Path, PathBuf},
 };
@@ -43,18 +42,26 @@ impl Directories {
         })
     }
 
-    pub fn template_name(&self, content_path: &Path) -> OsString {
-        // TODO: this assumes content and template files are flat directories
+    pub fn template_path(&self, content_path: &Path) -> PathBuf {
         // TODO: this assumes a 1-to-1 mapping of template to content
-        content_path
-            .with_extension("html")
-            .file_name()
-            .unwrap()
-            .to_owned()
+        self.templates.join(
+            content_path
+                .strip_prefix(&self.content)
+                .unwrap()
+                .with_extension("html"),
+        )
     }
 
-    pub fn build_name(&self, template_name: &str) -> PathBuf {
-        // TODO this assumes build folder is flat
-        self.build.join(template_name)
+    pub fn build_path<'a>(&self, template_path: &'a Path) -> PathBuf {
+        self.build
+            .join(template_path.strip_prefix(&self.templates).unwrap())
+    }
+
+    pub fn tera_template_name<'a>(&self, template_path: &'a Path) -> &'a str {
+        template_path
+            .strip_prefix(&self.templates)
+            .unwrap()
+            .to_str()
+            .unwrap()
     }
 }

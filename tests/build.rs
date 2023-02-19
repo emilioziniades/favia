@@ -16,7 +16,6 @@ fn test_two_page() -> anyhow::Result<()> {
 }
 
 #[test]
-#[ignore]
 fn test_blog() -> anyhow::Result<()> {
     build_tests(TestCase::new(
         "./examples/blog",
