@@ -6,7 +6,7 @@ use std::{fs, io, path::PathBuf};
 use tera::Tera;
 use walkdir::WalkDir;
 
-pub fn build(cwd: PathBuf) -> Result<(), Error> {
+pub fn build(cwd: PathBuf, _base_url: String) -> Result<(), Error> {
     info!("building site");
     let dirs = Directories::new(cwd)?;
 
