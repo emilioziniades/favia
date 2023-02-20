@@ -10,7 +10,7 @@ impl Markdown {
     pub fn get_value(&self, key: &str) -> Result<&toml::Value, Error> {
         self.frontmatter
             .get(key)
-            .ok_or(Error::Favia(format!("key {key} not found")))
+            .ok_or_else(|| Error::Favia(format!("key {key} not found")))
     }
 }
 

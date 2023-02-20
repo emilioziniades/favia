@@ -34,7 +34,7 @@ pub fn build(cwd: PathBuf) -> Result<(), Error> {
         } else {
             debug!("no exact template file found");
             let mut factory_template_path = None;
-            for dir_item in fs::read_dir(&template_path.parent().unwrap())? {
+            for dir_item in fs::read_dir(template_path.parent().unwrap())? {
                 let path = dir_item?.path();
                 if path.is_dir() {
                     continue;
@@ -51,9 +51,9 @@ pub fn build(cwd: PathBuf) -> Result<(), Error> {
                 }
             }
 
-            let factory_template_path = factory_template_path.ok_or(Error::Favia(format!(
-                "no factory template found for {content_path:#?}"
-            )))?;
+            let factory_template_path = factory_template_path.ok_or_else(|| {
+                Error::Favia(format!("no factory template found for {content_path:#?}"))
+            })?;
 
             debug!("found factory template: {factory_template_path:#?}");
             template_path = factory_template_path;
@@ -88,7 +88,7 @@ pub fn build(cwd: PathBuf) -> Result<(), Error> {
             let context = tera::Context::from(content_data);
             trace!("tera context: {context:#?}");
 
-            fs::create_dir_all(&build_path.parent().unwrap())?;
+            fs::create_dir_all(build_path.parent().unwrap())?;
             let build_file = fs::File::create(build_path)?;
 
             tera.render_to(tera_template_name, &context, build_file)?;

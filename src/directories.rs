@@ -52,7 +52,7 @@ impl Directories {
         )
     }
 
-    pub fn build_path<'a>(&self, template_path: &'a Path) -> PathBuf {
+    pub fn build_path(&self, template_path: &Path) -> PathBuf {
         self.build
             .join(template_path.strip_prefix(&self.templates).unwrap())
     }
