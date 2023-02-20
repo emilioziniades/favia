@@ -57,7 +57,7 @@ fn main() {
 
 fn cli() -> Command {
     Command::new("favia")
-        .about("a zero config static site generator with tailwind built in")
+        .about("a minimal config static site generator with tailwind built in")
         .author("Emilio Ziniades")
         .subcommand_required(true)
         .arg(
