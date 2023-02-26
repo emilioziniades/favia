@@ -32,16 +32,7 @@ favia determines the site structure from these two folders.
 
 ## todo
 
-- [x] basic rendering of Tera templates from markdown files with TOML frontmatter
-- [x] handle one-to-one and one-to-many template-to-content file relationships
-- [ ] parse tailwind classes and update CSS
-- [ ] parse base url and Tera version from config
-- [ ] generate urls dynamically with Tera function (like Flask's `url_for`)
-- [ ] handle passing TOML frontmatter from children content files to parent
-- [ ] development server that handles file updates and serves files locally
-- [ ] handle static files like images and fonts.
-- [ ] thorough documentation
-- [ ] better error messages in logs
+See open issues
 
 ## contributing
 
