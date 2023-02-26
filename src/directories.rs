@@ -4,7 +4,6 @@ use std::{
     fs, io,
     path::{self, Path, PathBuf},
 };
-
 pub struct Directories {
     pub templates: path::PathBuf,
     pub content: path::PathBuf,
@@ -20,7 +19,6 @@ impl Directories {
             return Err(io::Error::new(io::ErrorKind::NotFound, format!("{templates:?}")).into());
         }
         debug!("templates directory: {templates:?}");
-
         let content = cwd.join("content");
         if !content.exists() {
             return Err(io::Error::new(io::ErrorKind::NotFound, format!("{content:?}")).into());
@@ -42,10 +40,57 @@ impl Directories {
         })
     }
 
+    pub fn find_template_path(&self, content_path: &Path) -> Result<PathBuf, Error> {
+        match self.direct_template_path(content_path) {
+            Some(template_path) => {
+                debug!("template file found: {template_path:#?}");
+                Ok(template_path)
+            }
+            None => {
+                debug!("no exact template file found. searching for factory template");
+                self.factory_template_path(content_path)
+            }
+        }
+    }
+
+    pub fn factory_template_path(&self, content_path: &Path) -> Result<PathBuf, Error> {
+        let mut factory_template_path = None;
+        let template_path_parent = self.templates.join(
+            content_path
+                .strip_prefix(&self.content)
+                .unwrap()
+                .parent()
+                .unwrap(),
+        );
+        for dir_item in fs::read_dir(template_path_parent)? {
+            let path = dir_item?.path();
+            if path.is_dir() {
+                continue;
+            }
+            let file_stem = path.file_stem().unwrap().to_str().unwrap();
+            if file_stem.contains('[') && file_stem.contains(']') {
+                if let Some(old_factory_template) = factory_template_path {
+                    return Err(Error::Favia(format!(
+                        "Multiple factory functions found in single directory: {:#?} and {:#?}",
+                        &old_factory_template, &path
+                    )));
+                }
+                factory_template_path = Some(path);
+            }
+        }
+
+        let factory_template_path = factory_template_path.ok_or_else(|| {
+            Error::Favia(format!("no factory template found for {content_path:#?}"))
+        })?;
+
+        debug!("found factory template: {factory_template_path:#?}");
+        Ok(factory_template_path)
+    }
+
     // Provided with either content_file.md or content_file/index.md
     // Tries to find content_file.html or content_file/index.html
     // If neither exists, returns none
-    pub fn template_path(&self, content_path: &Path) -> Option<PathBuf> {
+    pub fn direct_template_path(&self, content_path: &Path) -> Option<PathBuf> {
         // content_file/index.md
         if content_path.file_name().unwrap() == "index.md" {
             // content_file/index.html
@@ -106,28 +151,32 @@ impl Directories {
         }
     }
 
-    pub fn build_path(&self, template_path: Option<&PathBuf>) -> Option<PathBuf> {
-        if let Some(template_path) = template_path {
-            if template_path.file_name().unwrap() == "index.html" {
-                Some(
-                    self.build
-                        .join(template_path.strip_prefix(&self.templates).unwrap()),
-                )
-            } else {
-                Some(
-                    self.build.join(
-                        template_path
-                            .strip_prefix(&self.templates)
-                            .unwrap()
-                            .parent()
-                            .unwrap()
-                            .join(template_path.file_stem().unwrap())
-                            .join("index.html"),
-                    ),
-                )
-            }
+    pub fn make_build_path(&self, template_path: &Path, content_path: &Path) -> PathBuf {
+        let file_name = template_path.file_name().unwrap().to_str().unwrap();
+
+        if file_name.contains('[') && file_name.contains(']') {
+            let slug = content_path.file_stem().unwrap();
+            self.make_build_path(
+                &template_path
+                    .parent()
+                    .unwrap()
+                    .join(slug)
+                    .with_extension("html"),
+                content_path,
+            )
+        } else if file_name == "index.html" {
+            self.build
+                .join(template_path.strip_prefix(&self.templates).unwrap())
         } else {
-            None
+            self.build.join(
+                template_path
+                    .strip_prefix(&self.templates)
+                    .unwrap()
+                    .parent()
+                    .unwrap()
+                    .join(template_path.file_stem().unwrap())
+                    .join("index.html"),
+            )
         }
     }
 
