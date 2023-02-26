@@ -11,7 +11,21 @@ fn test_basic() -> anyhow::Result<()> {
 fn test_two_page() -> anyhow::Result<()> {
     build_tests(TestCase::new(
         "./examples/two-page",
-        vec!["index.html", "about.html"],
+        vec!["index.html", "about/index.html"],
+    ))
+}
+
+#[test]
+fn test_mix_nested_flat_structure() -> anyhow::Result<()> {
+    build_tests(TestCase::new(
+        "./examples/mix-nested-flat-structure",
+        vec![
+            "index.html",
+            "about/index.html",
+            "contact/index.html",
+            "testimonials/index.html",
+            "projects/index.html",
+        ],
     ))
 }
 
@@ -22,9 +36,9 @@ fn test_blog() -> anyhow::Result<()> {
         vec![
             "index.html",
             "blog/index.html",
-            "blog/post-one.html",
-            "blog/post-two.html",
-            "blog/post-three.html",
+            "blog/post-one/index.html",
+            "blog/post-two/index.html",
+            "blog/post-three/index.html",
         ],
     ))
 }
