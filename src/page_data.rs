@@ -1,12 +1,12 @@
 use crate::error::Error;
 
 #[derive(Debug)]
-pub struct Markdown {
+pub struct PageData {
     frontmatter: toml::Value,
     content: String,
 }
 
-impl Markdown {
+impl PageData {
     pub fn get_value(&self, key: &str) -> Result<&toml::Value, Error> {
         self.frontmatter
             .get(key)
@@ -14,7 +14,7 @@ impl Markdown {
     }
 }
 
-impl TryFrom<String> for Markdown {
+impl TryFrom<String> for PageData {
     type Error = Error;
 
     fn try_from(markdown: String) -> Result<Self, Error> {
@@ -36,8 +36,8 @@ impl TryFrom<String> for Markdown {
     }
 }
 
-impl From<Markdown> for tera::Context {
-    fn from(markdown: Markdown) -> Self {
+impl From<PageData> for tera::Context {
+    fn from(markdown: PageData) -> Self {
         let mut context = tera::Context::new();
         context.insert("content", &markdown.content);
         let value = &tera::to_value(markdown.frontmatter).expect("parse from toml to tera::Value");

@@ -1,6 +1,6 @@
 use crate::directories::Directories;
 use crate::error::Error;
-use crate::markdown::Markdown;
+use crate::markdown::PageData;
 use log::{debug, info, trace};
 use std::{fs, io, path::PathBuf};
 use tera::Tera;
@@ -26,7 +26,7 @@ pub fn build(cwd: PathBuf) -> Result<(), Error> {
         let mut template_path = dirs.template_path(content_path);
         let mut build_path = dirs.build_path(template_path.as_ref());
 
-        let content_data: Markdown = fs::read_to_string(content_path)?.try_into()?;
+        let content_data: PageData = fs::read_to_string(content_path)?.try_into()?;
         trace!("parsed markdown: {content_data:#?}");
 
         if template_path.is_some() {
