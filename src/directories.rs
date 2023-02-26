@@ -72,7 +72,7 @@ impl Directories {
                 return Some(template_path);
             }
 
-            return None;
+            None
         }
         // content_file.md
         else {
@@ -102,7 +102,7 @@ impl Directories {
                 return Some(template_path);
             }
 
-            return None;
+            None
         }
     }
 
@@ -127,10 +127,8 @@ impl Directories {
                 )
             }
         } else {
-            return None;
+            None
         }
-        // self.build
-        //     .join(template_path.strip_prefix(&self.templates).unwrap())
     }
 
     pub fn tera_template_name<'a>(&self, template_path: &'a Path) -> &'a str {
