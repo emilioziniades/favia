@@ -51,3 +51,37 @@ This have gotten a bit crazy at work, so haven't found much time to work on this
 In my mind, I partially created this because I wanted to learn Rust, and also because I wanted to rebuild my personal website, which is currently a GatsbyJS site - yuck. So instead of making this into a fully fledged SSG with all the bells an whistles, I am going to get as far as I need to so that I can rebuild my website. This seems like a reasonable short term goal, and will help me prioritize how I go about this.
 
 The next task I am going to tackle, mainly because it seems like a fun task, is the css. I really want to build tailwind into this thing, without having to resort to JavaScript. I'd like to avoid any JS/Node dependencies. There is this [crate](https://docs.rs/tailwind-css/latest/tailwind_css/index.html) which seems promising. I've just given it a quick read and it seems...like it might work. It's not actively maintained and there are some open issues, but yeah.
+
+# 26-02-2022
+
+Made some good progress today. Did some refactoring, and also ensured that "nested" and "flat" content and template files are both correctly parsed.
+
+Nested file structures are like the following
+
+```
+content
+|-index.md
+|-about
+    |-index.md
+```
+
+Whereas flat would be something like
+
+```
+templates
+|-index.html
+|-about.html
+```
+
+`favia` handles all combinations of nested/flat content folders and nested/flat templates folders, ensuring that the build directory remains the same
+
+```
+build
+|-index.html
+|-about
+    |-index.html
+```
+
+After I got that sorted, I was able to actually serve up some of the example projects with `python -m http.server`, and it was quite satisfying to actually browse through the websites I had generated.
+
+I also took the time to create some github issues, and strip the todos out of the readme. I am treating this like a work project, creating tickets as I think of things, and methodically working through open tickets.
