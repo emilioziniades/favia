@@ -33,7 +33,7 @@ fn build_tests(test_case: TestCase) -> anyhow::Result<()> {
     let tmpdir = Temp::new_dir()?;
     let input_dir = Path::new(test_case.input_path).canonicalize()?;
     dir::copy(input_dir, &tmpdir, &CopyOptions::new().content_only(true))?;
-    favia::build(tmpdir.to_path_buf(), "https://example.com".to_string())?;
+    favia::build(tmpdir.to_path_buf())?;
 
     for output_html in test_case.expected_html_outputs {
         let output_path = Path::new(&tmpdir.to_path_buf())

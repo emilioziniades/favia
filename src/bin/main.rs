@@ -1,12 +1,8 @@
-use std::{env, path::Path, process};
+use std::{env, process};
 
 use clap::{Arg, ArgAction, Command};
-use favia::config;
 use log::{error, LevelFilter};
 use simplelog::{ColorChoice, ConfigBuilder, TermLogger, TerminalMode};
-
-const VERSION: &str = "0.1.1";
-const CONFIG_FILENAME: &str = "favia.toml";
 
 fn main() {
     let matches = cli().get_matches();
@@ -17,7 +13,7 @@ fn main() {
         _ => LevelFilter::Trace,
     };
 
-    let log_config = ConfigBuilder::new()
+    let config = ConfigBuilder::new()
         .add_filter_ignore_str("markdown::tokenizer")
         .add_filter_ignore_str("globset")
         .set_location_level(LevelFilter::Off)
@@ -25,30 +21,15 @@ fn main() {
         .set_target_level(LevelFilter::Off)
         .build();
 
-    TermLogger::init(
-        log_level,
-        log_config,
-        TerminalMode::Mixed,
-        ColorChoice::Auto,
-    )
-    .unwrap();
+    TermLogger::init(log_level, config, TerminalMode::Mixed, ColorChoice::Auto).unwrap();
 
     let cwd = env::current_dir().unwrap();
 
-    let config = config::Config::try_from(Path::new(CONFIG_FILENAME)).unwrap_or_else(|error| {
-        error!("{error:#?}");
-        process::exit(1);
-    });
-
-    if config.version != VERSION {
-        error!("version mismatch! {} != {VERSION}", config.version);
-        process::exit(1);
-    }
-
     match matches.subcommand() {
         Some(("dev", _)) => favia::dev(),
-        Some(("build", _)) => favia::build(cwd, config.base_url).unwrap_or_else(|error| {
-            error!("{error:#?}");
+        Some(("build", _)) => favia::build(cwd).unwrap_or_else(|err| {
+            error!("{err:#?}");
+            error!("{err}");
             process::exit(1);
         }),
         _ => unreachable!(),
