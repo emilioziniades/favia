@@ -2,7 +2,7 @@
 name = "favia"
 version = "0.1.1"
 edition = "2021"
-description = "Minimal config, content-oriented static site generator"
+description = "Zero-config, content-oriented static site generator"
 license = "MIT"
 
 [dependencies]

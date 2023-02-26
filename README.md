@@ -4,7 +4,7 @@ _Still very much a work in progress_
 
 Sometimes I have some content, and I want to stick it into a website. I'd prefer not to wade into some JavaScript framework simply to glue content and html together. I would especially prefer not to write css directly. So I made `favia`.
 
-`favia` is a lightweight static site generator written in Rust. It requires minimal-config, and has [Tailwind](https://tailwindcss.com/) built-in. Simply describe your [Tera](https://tera.netlify.app/) templates with Tailwind utility classes, as well as your content in markdown, and favia stiches them together.
+`favia` is a lightweight static site generator written in Rust. It is zero-config, and has [Tailwind](https://tailwindcss.com/) built-in. Simply describe your [Tera](https://tera.netlify.app/) templates with Tailwind utility classes, as well as your content in markdown, and favia stiches them together.
 
 ## api
 
@@ -35,7 +35,7 @@ favia determines the site structure from these two folders.
 - [x] basic rendering of Tera templates from markdown files with TOML frontmatter
 - [x] handle one-to-one and one-to-many template-to-content file relationships
 - [ ] parse tailwind classes and update CSS
-- [x] parse base url and Tera version from config
+- [ ] parse base url and Tera version from config
 - [ ] generate urls dynamically with Tera function (like Flask's `url_for`)
 - [ ] handle passing TOML frontmatter from children content files to parent
 - [ ] development server that handles file updates and serves files locally
