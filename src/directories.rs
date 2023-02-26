@@ -42,19 +42,95 @@ impl Directories {
         })
     }
 
-    pub fn template_path(&self, content_path: &Path) -> PathBuf {
-        // TODO: this assumes a 1-to-1 mapping of template to content
-        self.templates.join(
-            content_path
-                .strip_prefix(&self.content)
-                .unwrap()
-                .with_extension("html"),
-        )
+    // Provided with either content_file.md or content_file/index.md
+    // Tries to find content_file.html or content_file/index.html
+    // If neither exists, returns none
+    pub fn template_path(&self, content_path: &Path) -> Option<PathBuf> {
+        // content_file/index.md
+        if content_path.file_name().unwrap() == "index.md" {
+            // content_file/index.html
+            let template_path = self.templates.join(
+                content_path
+                    .strip_prefix(&self.content)
+                    .unwrap()
+                    .with_extension("html"),
+            );
+            if template_path.exists() {
+                return Some(template_path);
+            }
+
+            // content_file.html
+            let template_path = self.templates.join(
+                content_path
+                    .strip_prefix(&self.content)
+                    .unwrap()
+                    .parent()
+                    .unwrap()
+                    .with_extension("html"),
+            );
+            if template_path.exists() {
+                return Some(template_path);
+            }
+
+            return None;
+        }
+        // content_file.md
+        else {
+            // content_file.html
+            let template_path = self.templates.join(
+                content_path
+                    .strip_prefix(&self.content)
+                    .unwrap()
+                    .with_extension("html"),
+            );
+            if template_path.exists() {
+                return Some(template_path);
+            }
+
+            // content_file/index.html
+            let template_path = self.templates.join(
+                content_path
+                    .strip_prefix(&self.content)
+                    .unwrap()
+                    .parent()
+                    .unwrap()
+                    .join(content_path.file_stem().unwrap())
+                    .join("index.html"),
+            );
+
+            if template_path.exists() {
+                return Some(template_path);
+            }
+
+            return None;
+        }
     }
 
-    pub fn build_path(&self, template_path: &Path) -> PathBuf {
-        self.build
-            .join(template_path.strip_prefix(&self.templates).unwrap())
+    pub fn build_path(&self, template_path: Option<&PathBuf>) -> Option<PathBuf> {
+        if let Some(template_path) = template_path {
+            if template_path.file_name().unwrap() == "index.html" {
+                Some(
+                    self.build
+                        .join(template_path.strip_prefix(&self.templates).unwrap()),
+                )
+            } else {
+                Some(
+                    self.build.join(
+                        template_path
+                            .strip_prefix(&self.templates)
+                            .unwrap()
+                            .parent()
+                            .unwrap()
+                            .join(template_path.file_stem().unwrap())
+                            .join("index.html"),
+                    ),
+                )
+            }
+        } else {
+            return None;
+        }
+        // self.build
+        //     .join(template_path.strip_prefix(&self.templates).unwrap())
     }
 
     pub fn tera_template_name<'a>(&self, template_path: &'a Path) -> &'a str {
