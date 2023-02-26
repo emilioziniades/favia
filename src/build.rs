@@ -1,6 +1,6 @@
 use crate::directories::Directories;
 use crate::error::Error;
-use crate::markdown::PageData;
+use crate::page_data::PageData;
 use log::{debug, info, trace};
 use std::{fs, io, path::PathBuf};
 use tera::Tera;
@@ -25,9 +25,6 @@ pub fn build(cwd: PathBuf) -> Result<(), Error> {
 
         let mut template_path = dirs.template_path(content_path);
         let mut build_path = dirs.build_path(template_path.as_ref());
-
-        let content_data: PageData = fs::read_to_string(content_path)?.try_into()?;
-        trace!("parsed markdown: {content_data:#?}");
 
         if template_path.is_some() {
             debug!("template file found: {template_path:#?}");
@@ -65,26 +62,7 @@ pub fn build(cwd: PathBuf) -> Result<(), Error> {
             debug!("found factory template: {factory_template_path:#?}");
             template_path = Some(factory_template_path);
 
-            let name_to_replace = template_path
-                .as_ref()
-                .unwrap()
-                .file_name()
-                .unwrap()
-                .to_str()
-                .unwrap();
-            let left_bracket_pos = name_to_replace.find('[').unwrap();
-            let right_bracket_pos = name_to_replace.find(']').unwrap();
-            let field_for_slug =
-                name_to_replace[left_bracket_pos + 1..right_bracket_pos].to_string();
-
-            let slug = match content_data.get_value(&field_for_slug)? {
-                toml::Value::String(value) => value,
-                _ => {
-                    return Err(Error::Favia(format!(
-                        "slug field {field_for_slug} exists, but key is not a string"
-                    )))
-                }
-            };
+            let slug = content_path.file_stem().unwrap();
 
             build_path = dirs.build_path(
                 Some(
@@ -109,7 +87,9 @@ pub fn build(cwd: PathBuf) -> Result<(), Error> {
         {
             debug!("tera template found {tera_template_name}");
 
-            let context = tera::Context::from(content_data);
+            let page_data: PageData = fs::read_to_string(content_path)?.try_into()?;
+            trace!("parsed markdown: {page_data:#?}");
+            let context = tera::Context::from(page_data);
             trace!("tera context: {context:#?}");
 
             fs::create_dir_all(build_path.as_ref().unwrap().parent().unwrap())?;
