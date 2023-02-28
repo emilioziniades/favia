@@ -1,4 +1,5 @@
 pub mod build;
+pub mod builder;
 pub mod develop;
 pub mod directories;
 pub mod error;

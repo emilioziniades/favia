@@ -11,7 +11,7 @@ pub struct Directories {
 }
 
 impl Directories {
-    pub fn new(cwd: PathBuf) -> Result<Self, Error> {
+    pub fn new(cwd: &Path) -> Result<Self, Error> {
         debug!("working directory: {cwd:?}");
 
         let templates = cwd.join("templates");
