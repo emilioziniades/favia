@@ -26,7 +26,7 @@ fn main() {
     let cwd = env::current_dir().unwrap();
 
     match matches.subcommand() {
-        Some(("dev", _)) => favia::dev(),
+        Some(("develop", _)) => favia::develop(),
         Some(("build", _)) => favia::build(cwd).unwrap_or_else(|err| {
             error!("{err:#?}");
             error!("{err}");
@@ -49,7 +49,8 @@ fn cli() -> Command {
                 .action(ArgAction::Count),
         )
         .subcommand(
-            Command::new("dev").about("run a development server which watches for file changes"),
+            Command::new("develop")
+                .about("run a development server which watches for file changes"),
         )
         .subcommand(
             Command::new("build").about("build the site into static html and css to be served"),

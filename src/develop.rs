@@ -1,6 +1,6 @@
 use log::info;
 
-pub fn dev() {
+pub fn develop() {
     info!("development server starting");
     todo!()
 }

@@ -12,7 +12,7 @@ There are only two commands:
 
 `favia build` builds a bundle of html, css and static files to be served.
 
-`favia dev` runs a development server listening for changes and rebuilding.
+`favia develop` runs a development server listening for changes and rebuilding.
 
 You can specify whether you want the output to be verbose, which changes the log level. `favia -v build` includes debug logs, whilst `favia -vv build` includes trace logs. It defaults to info level logs.
 
