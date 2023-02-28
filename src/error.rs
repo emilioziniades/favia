@@ -6,6 +6,7 @@ pub enum Error {
     Io(io::Error),
     Tera(tera::Error),
     Toml(toml::de::Error),
+    Notify(notify::Error),
     Favia(String),
 }
 
@@ -33,6 +34,12 @@ impl From<walkdir::Error> for Error {
     }
 }
 
+impl From<notify::Error> for Error {
+    fn from(err: notify::Error) -> Self {
+        Error::Notify(err)
+    }
+}
+
 impl std::error::Error for Error {}
 
 impl fmt::Display for Error {
@@ -44,6 +51,7 @@ impl fmt::Display for Error {
             },
             Error::Tera(_) => todo!(),
             Error::Toml(_) => todo!(),
+            Error::Notify(err) => write!(f, "{err}")?,
             Error::Favia(err) => write!(f, "{err}")?,
         }
 

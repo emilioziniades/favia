@@ -34,6 +34,14 @@ impl Builder {
         Ok(())
     }
 
+    pub fn templates_folder(&self) -> &Path {
+        &self.dirs.templates
+    }
+
+    pub fn content_folder(&self) -> &Path {
+        &self.dirs.content
+    }
+
     pub fn template_path(&self, content_path: &Path) -> Result<PathBuf, Error> {
         self.dirs.find_template_path(content_path)
     }

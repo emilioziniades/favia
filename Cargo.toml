@@ -13,6 +13,9 @@ tera = "1"
 markdown = "=1.0.0-alpha.5"
 toml = "0.7.1"
 walkdir = "2"
+notify = "5.0.10"
+rocket = "0.5.0-rc.2"
+# rocket_contrib = { version = "0.4.11", default-features = false}
 
 [dev-dependencies]
 mktemp = "0.5.0"

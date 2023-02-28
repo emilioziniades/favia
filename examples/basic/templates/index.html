@@ -1,17 +1,11 @@
 <html>
   <h1>Hello world!</h1>
   <h2>And hello specifically to Emilio</h2>
-  <p>This is some <code>markdown</code> content that will be rendered as <code>html</code>. Here are the names of some of my pets.</p>
+  {{ content | safe }}
 
   <ul>
-    
-    <li>Layla</li>
-    
-    <li>Fleur</li>
-    
-    <li>Ivy</li>
-    
-    <li>Astro</li>
-    
+    {% for pet in fm.pets %}
+    <li>{{pet}}</li>
+    {% endfor %}
   </ul>
 </html>

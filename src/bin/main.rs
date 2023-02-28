@@ -26,12 +26,11 @@ fn main() {
     let cwd = env::current_dir().unwrap();
 
     match matches.subcommand() {
-        // Some(("develop", _)) => favia::develop(&cwd).unwrap_or_else(|err| {
-        //     error!("{err:#?}");
-        //     // error!("{err}");
-        //     process::exit(1);
-        // }),
-        Some(("develop", _)) => favia::develop(),
+        Some(("develop", _)) => favia::develop(&cwd).unwrap_or_else(|err| {
+            error!("{err:#?}");
+            // error!("{err}");
+            process::exit(1);
+        }),
         Some(("build", _)) => favia::build(&cwd).unwrap_or_else(|err| {
             error!("{err:#?}");
             // error!("{err}");
