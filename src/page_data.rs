@@ -10,7 +10,7 @@ impl PageData {
     pub fn get_value(&self, key: &str) -> Result<&toml::Value> {
         self.frontmatter
             .get(key)
-            .ok_or_else(|| Error::TomlLookup(format!("{key}")))
+            .ok_or_else(|| Error::TomlLookup(key.to_string()))
     }
 }
 
