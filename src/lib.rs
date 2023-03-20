@@ -7,3 +7,4 @@ pub mod page_data;
 
 pub use build::build;
 pub use develop::develop;
+pub use error::{Error, Result};

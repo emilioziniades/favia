@@ -1,6 +1,6 @@
 use crate::build::build_content_file;
 use crate::builder::Builder;
-use crate::error::Error;
+use crate::Result;
 use log::info;
 use notify::event::{EventKind::*, ModifyKind::*};
 use notify::{RecommendedWatcher, RecursiveMode, Watcher};
@@ -11,7 +11,7 @@ use std::path;
 // 1. development server,
 // 2. watch for changes and rebuilding changed files
 
-pub async fn develop(cwd: &path::Path) -> Result<(), Error> {
+pub async fn develop(cwd: &path::Path) -> Result<()> {
     let builder = Builder::new(cwd)?;
     info!("doing initial site build");
     crate::build(cwd).unwrap();
@@ -74,7 +74,7 @@ fn filter_event(event: notify::Event) -> Option<notify::Event> {
     Some(event)
 }
 
-fn handle_file_change(event: notify::Event, builder: &Builder) -> Result<(), Error> {
+fn handle_file_change(event: notify::Event, builder: &Builder) -> Result<()> {
     let path = event.paths.first().expect("the event should have a path");
 
     if path.starts_with(builder.content_folder()) {

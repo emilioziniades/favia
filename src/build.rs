@@ -1,11 +1,11 @@
-use crate::error::Error;
 use crate::page_data::PageData;
+use crate::Result;
 use crate::{builder::Builder, directories::Directories};
 use log::{debug, info, trace};
 use std::{fs, path::Path};
 use walkdir::WalkDir;
 
-pub fn build(cwd: &Path) -> Result<(), Error> {
+pub fn build(cwd: &Path) -> Result<()> {
     info!("building site");
     info!("preparing directories");
     let builder = Builder::new(cwd)?;
@@ -26,7 +26,7 @@ pub fn build(cwd: &Path) -> Result<(), Error> {
     Ok(())
 }
 
-pub fn build_content_file(content_path: &Path, builder: &Builder) -> Result<(), Error> {
+pub fn build_content_file(content_path: &Path, builder: &Builder) -> Result<()> {
     debug!("content file: {content_path:#?}");
 
     let template_path = builder.template_path(content_path)?;

@@ -1,4 +1,4 @@
-use crate::error::Error;
+use crate::{Error, Result};
 
 #[derive(Debug)]
 pub struct PageData {
@@ -7,17 +7,17 @@ pub struct PageData {
 }
 
 impl PageData {
-    pub fn get_value(&self, key: &str) -> Result<&toml::Value, Error> {
+    pub fn get_value(&self, key: &str) -> Result<&toml::Value> {
         self.frontmatter
             .get(key)
-            .ok_or_else(|| Error::Favia(format!("key {key} not found")))
+            .ok_or_else(|| Error::TomlLookup(format!("{key}")))
     }
 }
 
 impl TryFrom<String> for PageData {
     type Error = Error;
 
-    fn try_from(markdown: String) -> Result<Self, Error> {
+    fn try_from(markdown: String) -> Result<Self> {
         let frontmatter_start = markdown.find("+++");
         let frontmatter_end = markdown.rfind("+++");
 

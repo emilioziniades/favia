@@ -5,7 +5,7 @@ use std::{
 
 use tera::Tera;
 
-use crate::{directories::Directories, error::Error};
+use crate::{directories::Directories, Result};
 
 pub struct Builder {
     dirs: Directories,
@@ -13,7 +13,7 @@ pub struct Builder {
 }
 
 impl Builder {
-    pub fn new(cwd: &Path) -> Result<Self, Error> {
+    pub fn new(cwd: &Path) -> Result<Self> {
         let dirs = Directories::new(cwd)?;
 
         Ok(Self {
@@ -27,7 +27,7 @@ impl Builder {
         template_name: &str,
         context: tera::Context,
         build_path: &Path,
-    ) -> Result<(), Error> {
+    ) -> Result<()> {
         fs::create_dir_all(build_path.parent().unwrap())?;
         let build_file = fs::File::create(build_path)?;
         self.tera.render_to(template_name, &context, build_file)?;
@@ -46,7 +46,7 @@ impl Builder {
         self.dirs.build.clone()
     }
 
-    pub fn template_path(&self, content_path: &Path) -> Result<PathBuf, Error> {
+    pub fn template_path(&self, content_path: &Path) -> Result<PathBuf> {
         self.dirs.find_template_path(content_path)
     }
 
@@ -54,7 +54,7 @@ impl Builder {
         self.dirs.make_build_path(template_path, content_path)
     }
 
-    pub fn tera_template_name(&self, template_path: &Path) -> Result<String, Error> {
+    pub fn tera_template_name(&self, template_path: &Path) -> Result<String> {
         let tera_template_name = self.dirs.tera_template_name(template_path);
         match self
             .tera

@@ -1,4 +1,4 @@
-use crate::error::Error;
+use crate::{Error, Result};
 use log::debug;
 use std::{
     fs, io,
@@ -11,7 +11,7 @@ pub struct Directories {
 }
 
 impl Directories {
-    pub fn new(cwd: &Path) -> Result<Self, Error> {
+    pub fn new(cwd: &Path) -> Result<Self> {
         debug!("working directory: {cwd:?}");
 
         let templates = cwd.join("templates");
@@ -40,7 +40,7 @@ impl Directories {
         })
     }
 
-    pub fn find_template_path(&self, content_path: &Path) -> Result<PathBuf, Error> {
+    pub fn find_template_path(&self, content_path: &Path) -> Result<PathBuf> {
         match self.direct_template_path(content_path) {
             Some(template_path) => {
                 debug!("template file found: {template_path:#?}");
@@ -53,7 +53,7 @@ impl Directories {
         }
     }
 
-    pub fn factory_template_path(&self, content_path: &Path) -> Result<PathBuf, Error> {
+    pub fn factory_template_path(&self, content_path: &Path) -> Result<PathBuf> {
         let mut factory_template_path = None;
         let template_path_parent = self.templates.join(
             content_path
@@ -70,18 +70,14 @@ impl Directories {
             let file_stem = path.file_stem().unwrap().to_str().unwrap();
             if file_stem.contains('[') && file_stem.contains(']') {
                 if let Some(old_factory_template) = factory_template_path {
-                    return Err(Error::Favia(format!(
-                        "Multiple factory functions found in single directory: {:#?} and {:#?}",
-                        &old_factory_template, &path
-                    )));
+                    return Err(Error::MultipleTemplateFactories(old_factory_template, path));
                 }
                 factory_template_path = Some(path);
             }
         }
 
-        let factory_template_path = factory_template_path.ok_or_else(|| {
-            Error::Favia(format!("no factory template found for {content_path:#?}"))
-        })?;
+        let factory_template_path = factory_template_path
+            .ok_or_else(|| Error::MissingTemplateFactory(content_path.to_path_buf()))?;
 
         debug!("found factory template: {factory_template_path:#?}");
         Ok(factory_template_path)
