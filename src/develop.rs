@@ -1,4 +1,3 @@
-use crate::build::build_content_file;
 use crate::builder::Builder;
 use crate::Result;
 use log::info;
@@ -6,10 +5,6 @@ use notify::event::{EventKind::*, ModifyKind::*};
 use notify::{RecommendedWatcher, RecursiveMode, Watcher};
 use rocket::tokio;
 use std::path;
-
-// two threads:
-// 1. development server,
-// 2. watch for changes and rebuilding changed files
 
 pub async fn develop(cwd: &path::Path) -> Result<()> {
     let builder = Builder::new(cwd)?;
@@ -19,6 +14,7 @@ pub async fn develop(cwd: &path::Path) -> Result<()> {
 
     let build_folder = builder.build_folder();
 
+    // watch for changes, and rebuild changes files
     tokio::spawn(async move {
         let (tx, rx) = std::sync::mpsc::channel();
         let mut watcher = RecommendedWatcher::new(tx, notify::Config::default()).unwrap();
@@ -41,6 +37,7 @@ pub async fn develop(cwd: &path::Path) -> Result<()> {
         }
     });
 
+    // development server
     let _ = rocket::build()
         .mount("/", rocket::fs::FileServer::from(build_folder))
         .launch()
@@ -78,7 +75,7 @@ fn handle_file_change(event: notify::Event, builder: &Builder) -> Result<()> {
     let path = event.paths.first().expect("the event should have a path");
 
     if path.starts_with(builder.content_folder()) {
-        build_content_file(path, builder)?;
+        builder.build_content_file(path)?;
     } else if path.starts_with(builder.templates_folder()) {
         todo!("build changes in template folder");
     }

@@ -3,9 +3,10 @@ use std::{
     path::{Path, PathBuf},
 };
 
+use log::{debug, trace};
 use tera::Tera;
 
-use crate::{directories::Directories, Result};
+use crate::{directories::Directories, page_data::PageData, Result};
 
 pub struct Builder {
     dirs: Directories,
@@ -67,5 +68,27 @@ impl Builder {
                 format!("{tera_template_name:?}"),
             ))?,
         }
+    }
+
+    pub fn build_content_file(&self, content_path: &Path) -> Result<()> {
+        debug!("content file: {content_path:#?}");
+
+        let template_path = self.template_path(content_path)?;
+
+        let build_path = self.build_path(&template_path, content_path);
+        debug!("build path: {build_path:?}");
+
+        let tera_template_name = self.tera_template_name(&template_path)?;
+        debug!("tera template found {tera_template_name:?}");
+
+        let page_data: PageData = fs::read_to_string(content_path)?.try_into()?;
+        trace!("parsed page data: {page_data:#?}");
+
+        let context = tera::Context::from(page_data);
+        trace!("tera context: {context:#?}");
+
+        self.render(&tera_template_name, context, &build_path)?;
+
+        Ok(())
     }
 }
