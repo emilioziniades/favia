@@ -40,6 +40,12 @@ impl From<notify::Error> for Error {
     }
 }
 
+impl From<rocket::Error> for Error {
+    fn from(_err: rocket::Error) -> Self {
+        todo!()
+    }
+}
+
 impl std::error::Error for Error {}
 
 impl fmt::Display for Error {

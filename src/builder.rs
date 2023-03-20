@@ -17,7 +17,7 @@ impl Builder {
         let dirs = Directories::new(cwd)?;
 
         Ok(Self {
-            tera: Tera::new(&dirs.templates.join("**").join("*").to_str().unwrap())?,
+            tera: Tera::new(dirs.templates.join("**").join("*").to_str().unwrap())?,
             dirs,
         })
     }
@@ -40,6 +40,10 @@ impl Builder {
 
     pub fn content_folder(&self) -> &Path {
         &self.dirs.content
+    }
+
+    pub fn build_folder(&self) -> PathBuf {
+        self.dirs.build.clone()
     }
 
     pub fn template_path(&self, content_path: &Path) -> Result<PathBuf, Error> {

@@ -3,41 +3,48 @@ use crate::builder::Builder;
 use crate::error::Error;
 use log::info;
 use notify::event::{EventKind::*, ModifyKind::*};
-use notify::{Config, RecommendedWatcher, RecursiveMode, Watcher};
+use notify::{RecommendedWatcher, RecursiveMode, Watcher};
+use rocket::tokio;
 use std::path;
-// use std::thread;
 
-pub fn develop(cwd: &path::Path) -> Result<(), Error> {
+// two threads:
+// 1. development server,
+// 2. watch for changes and rebuilding changed files
+
+pub async fn develop(cwd: &path::Path) -> Result<(), Error> {
     let builder = Builder::new(cwd)?;
     info!("doing initial site build");
-    crate::build(cwd)?;
+    crate::build(cwd).unwrap();
     info!("development server starting");
 
-    // use rocket to serve static files: https://api.rocket.rs/v0.4/rocket_contrib/serve/struct.StaticFiles.html
-    // thread::spawn(|| {});
+    let build_folder = builder.build_folder();
 
-    let (tx, rx) = std::sync::mpsc::channel();
-
-    // Automatically select the best implementation for your platform.
-    // You can also access each implementation directly e.g. INotifyWatcher.
-    let mut watcher = RecommendedWatcher::new(tx, Config::default())?;
-
-    // Add a path to be watched. All files and directories at that path and
-    // below will be monitored for changes.
-    watcher.watch(&builder.templates_folder(), RecursiveMode::Recursive)?;
-    watcher.watch(&builder.content_folder(), RecursiveMode::Recursive)?;
-
-    for res in rx {
-        match res {
-            Ok(event) => {
-                if let Some(event) = filter_event(event) {
-                    println!("changed: {:#?}", event);
-                    handle_file_change(event, &builder)?;
-                };
+    tokio::spawn(async move {
+        let (tx, rx) = std::sync::mpsc::channel();
+        let mut watcher = RecommendedWatcher::new(tx, notify::Config::default()).unwrap();
+        watcher
+            .watch(builder.templates_folder(), RecursiveMode::Recursive)
+            .unwrap();
+        watcher
+            .watch(builder.content_folder(), RecursiveMode::Recursive)
+            .unwrap();
+        for res in rx {
+            match res {
+                Ok(event) => {
+                    if let Some(event) = filter_event(event) {
+                        println!("changed: {:#?}", event);
+                        handle_file_change(event, &builder).unwrap();
+                    };
+                }
+                Err(e) => println!("watch error: {:?}", e),
             }
-            Err(e) => println!("watch error: {:?}", e),
         }
-    }
+    });
+
+    let _ = rocket::build()
+        .mount("/", rocket::fs::FileServer::from(build_folder))
+        .launch()
+        .await?;
 
     Ok(())
 }
@@ -47,15 +54,15 @@ fn filter_event(event: notify::Event) -> Option<notify::Event> {
         panic!("have not considered events with more than one path")
     }
 
-    let path = event.paths.first().expect("the event should have a path");
+    let path = event.paths.first()?;
 
     // weird neovim file management
-    if path.file_name().unwrap() == "4913" {
+    if path.file_name()? == "4913" {
         return None;
     }
 
     // weird neovim file management
-    if path.file_name().unwrap().to_str().unwrap().ends_with('~') {
+    if path.file_name()?.to_str()?.ends_with('~') {
         return None;
     }
 
@@ -73,8 +80,7 @@ fn handle_file_change(event: notify::Event, builder: &Builder) -> Result<(), Err
     if path.starts_with(builder.content_folder()) {
         build_content_file(path, builder)?;
     } else if path.starts_with(builder.templates_folder()) {
-        // need to add something like build_template_file
-        todo!();
+        todo!("build changes in template folder");
     }
 
     Ok(())

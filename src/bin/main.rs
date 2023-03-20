@@ -4,7 +4,8 @@ use clap::{Arg, ArgAction, Command};
 use log::{error, LevelFilter};
 use simplelog::{ColorChoice, ConfigBuilder, TermLogger, TerminalMode};
 
-fn main() {
+#[rocket::main]
+async fn main() {
     let matches = cli().get_matches();
 
     let log_level = match matches.get_count("verbose") {
@@ -26,7 +27,7 @@ fn main() {
     let cwd = env::current_dir().unwrap();
 
     match matches.subcommand() {
-        Some(("develop", _)) => favia::develop(&cwd).unwrap_or_else(|err| {
+        Some(("develop", _)) => favia::develop(&cwd).await.unwrap_or_else(|err| {
             error!("{err:#?}");
             // error!("{err}");
             process::exit(1);
