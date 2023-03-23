@@ -1,6 +1,6 @@
 use crate::builder::Builder;
 use crate::Result;
-use log::info;
+use log::{debug, info};
 use notify::event::{EventKind::*, ModifyKind::*};
 use notify::{RecommendedWatcher, RecursiveMode, Watcher};
 use rocket::tokio;
@@ -27,10 +27,11 @@ pub async fn develop(cwd: &path::Path) -> Result<()> {
         for res in rx {
             match res {
                 Ok(event) => {
-                    if let Some(event) = filter_event(event) {
-                        println!("changed: {:#?}", event);
-                        handle_file_change(event, &builder).unwrap();
-                    };
+                    debug!("{event:#?}");
+                    // if let Some(event) = filter_event(event) {
+                    // println!("changed: {:#?}", event);
+                    handle_file_change(event, &builder).unwrap();
+                    // };
                 }
                 Err(e) => println!("watch error: {:?}", e),
             }
@@ -48,7 +49,7 @@ pub async fn develop(cwd: &path::Path) -> Result<()> {
 
 fn filter_event(event: notify::Event) -> Option<notify::Event> {
     if event.paths.len() > 1 {
-        panic!("have not considered events with more than one path")
+        panic!("have not considered events with more than one path");
     }
 
     let path = event.paths.first()?;
@@ -77,7 +78,14 @@ fn handle_file_change(event: notify::Event, builder: &Builder) -> Result<()> {
     if path.starts_with(builder.content_folder()) {
         builder.build_content_file(path)?;
     } else if path.starts_with(builder.templates_folder()) {
-        todo!("build changes in template folder");
+        // TODO: indentify specific files to rebuild
+        // as is, this shoots an ant with a nuke.
+        // determining which files to rebuild is non-trivial because
+        // 1. A template may be responsible for multiple content files
+        // 2. A template may be a base template, so we would also need
+        // to know the dependency graph of templates.
+        debug!("rebuilding whole project");
+        builder.build()?;
     }
 
     Ok(())
