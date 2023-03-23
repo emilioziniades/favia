@@ -5,7 +5,7 @@ alias l := lint
 alias c := check
 
 run subcommand:
-    cargo run -- -vv {{subcommand}}
+    cd {{invocation_directory()}} && cargo run -- -vv {{subcommand}}
 
 build:
     cargo build
