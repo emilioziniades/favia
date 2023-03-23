@@ -28,10 +28,10 @@ pub async fn develop(cwd: &path::Path) -> Result<()> {
             match res {
                 Ok(event) => {
                     debug!("{event:#?}");
-                    // if let Some(event) = filter_event(event) {
-                    // println!("changed: {:#?}", event);
-                    handle_file_change(event, &builder).unwrap();
-                    // };
+                    if let Some(event) = filter_event(event) {
+                        debug!("file change detected: {event:#?}");
+                        handle_file_change(event, &builder).unwrap();
+                    };
                 }
                 Err(e) => println!("watch error: {:?}", e),
             }
