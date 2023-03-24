@@ -7,7 +7,7 @@ use rocket::tokio;
 use std::path;
 
 pub async fn develop(cwd: &path::Path) -> Result<()> {
-    let builder = Builder::new(cwd)?;
+    let mut builder = Builder::new(cwd)?;
     info!("doing initial site build");
     crate::build(cwd).unwrap();
     info!("development server starting");
@@ -30,7 +30,7 @@ pub async fn develop(cwd: &path::Path) -> Result<()> {
                     debug!("{event:#?}");
                     if let Some(event) = filter_event(event) {
                         debug!("file change detected: {event:#?}");
-                        handle_file_change(event, &builder).unwrap();
+                        handle_file_change(event, &mut builder).unwrap();
                     };
                 }
                 Err(e) => println!("watch error: {:?}", e),
@@ -72,19 +72,21 @@ fn filter_event(event: notify::Event) -> Option<notify::Event> {
     Some(event)
 }
 
-fn handle_file_change(event: notify::Event, builder: &Builder) -> Result<()> {
+fn handle_file_change(event: notify::Event, builder: &mut Builder) -> Result<()> {
     let path = event.paths.first().expect("the event should have a path");
 
     if path.starts_with(builder.content_folder()) {
         builder.build_content_file(path)?;
     } else if path.starts_with(builder.templates_folder()) {
-        // TODO: indentify specific files to rebuild
-        // as is, this shoots an ant with a nuke.
-        // determining which files to rebuild is non-trivial because
+        // TODO: Indentify specific files to rebuild. Currently, this
+        // function rebuilds the whole site when a template file changes.
+        // Rebuilding the whole site wont scale with large sites.
+        // Determining which files to rebuild is non-trivial because
         // 1. A template may be responsible for multiple content files
         // 2. A template may be a base template, so we would also need
         // to know the dependency graph of templates.
-        debug!("rebuilding whole project");
+        debug!("template change detected, rebuilding project");
+        builder.reload_templates()?;
         builder.build()?;
     }
 

@@ -102,13 +102,13 @@ impl Builder {
     }
 
     pub fn build(&self) -> Result<()> {
-        self.build_all()?;
+        self.build_all_pages()?;
         self.generate_css()?;
 
         Ok(())
     }
 
-    fn build_all(&self) -> Result<()> {
+    fn build_all_pages(&self) -> Result<()> {
         for entry in walkdir::WalkDir::new(self.content_folder())
             .into_iter()
             .filter_map(|entry| entry.ok())
@@ -141,6 +141,11 @@ impl Builder {
             &mut vec![],
         );
 
+        Ok(())
+    }
+
+    pub fn reload_templates(&mut self) -> Result<()> {
+        self.tera.full_reload()?;
         Ok(())
     }
 }
