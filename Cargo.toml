@@ -6,7 +6,7 @@ description = "Zero-config, content-oriented static site generator"
 license = "MIT"
 
 [dependencies]
-clap = "4.1.4"
+clap ={ version = "4.0", features = ["derive"] }
 log = "0.4"
 simplelog = "^0.12.0"
 tera = "1"

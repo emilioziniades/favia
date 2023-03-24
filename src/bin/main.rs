@@ -1,14 +1,14 @@
 use std::{env, process};
 
-use clap::{Arg, ArgAction, Command};
+use clap::Parser;
 use log::{error, LevelFilter};
 use simplelog::{ColorChoice, ConfigBuilder, TermLogger, TerminalMode};
 
 #[rocket::main]
 async fn main() {
-    let matches = cli().get_matches();
+    let cli = favia::Cli::parse();
 
-    let log_level = match matches.get_count("verbose") {
+    let log_level = match cli.verbosity {
         0 => LevelFilter::Info,
         1 => LevelFilter::Debug,
         _ => LevelFilter::Trace,
@@ -26,38 +26,21 @@ async fn main() {
 
     let cwd = env::current_dir().unwrap();
 
-    match matches.subcommand() {
-        Some(("develop", _)) => favia::develop(&cwd).await.unwrap_or_else(|err| {
+    match cli.command {
+        favia::Commands::Develop => favia::develop(&cwd).await.unwrap_or_else(|err| {
             error!("{err:#?}");
             // error!("{err}");
             process::exit(1);
         }),
-        Some(("build", _)) => favia::build(&cwd).unwrap_or_else(|err| {
+        favia::Commands::Build => favia::build(&cwd).unwrap_or_else(|err| {
             error!("{err:#?}");
             // error!("{err}");
             process::exit(1);
         }),
-        _ => unreachable!(),
+        favia::Commands::New { name } => favia::new(&cwd, name).unwrap_or_else(|err| {
+            error!("{err:#?}");
+            // error!("{err}");
+            process::exit(1);
+        }),
     }
-}
-
-fn cli() -> Command {
-    Command::new("favia")
-        .about("a zero config static site generator with tailwind built in")
-        .author("Emilio Ziniades")
-        .subcommand_required(true)
-        .arg(
-            Arg::new("verbose")
-                .help("sets verbosity level, -v => debug, -vv => trace, otherwise info")
-                .short('v')
-                .long("verbose")
-                .action(ArgAction::Count),
-        )
-        .subcommand(
-            Command::new("develop")
-                .about("run a development server which watches for file changes"),
-        )
-        .subcommand(
-            Command::new("build").about("build the site into static html and css to be served"),
-        )
 }
