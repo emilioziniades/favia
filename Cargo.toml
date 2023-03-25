@@ -7,7 +7,7 @@ license = "MIT"
 repository = "https://github.com/emilioziniades/favia"
 homepage = "https://github.com/emilioziniades/favia"
 categories = ["web-programming"]
-keywords = ["static-site-generator"]
+keywords = ["static", "site", "generator"]
 
 
 [dependencies]
