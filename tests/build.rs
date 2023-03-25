@@ -6,12 +6,12 @@ use favia::Result;
 
 #[test]
 fn test_basic() -> Result<()> {
-    build_tests(TestCase::new("./examples/basic", vec!["index.html"]))
+    test_build_command(TestCase::new("./examples/basic", vec!["index.html"]))
 }
 
 #[test]
 fn test_two_page() -> Result<()> {
-    build_tests(TestCase::new(
+    test_build_command(TestCase::new(
         "./examples/two-page",
         vec!["index.html", "about/index.html"],
     ))
@@ -19,7 +19,7 @@ fn test_two_page() -> Result<()> {
 
 #[test]
 fn test_mix_nested_flat_structure() -> Result<()> {
-    build_tests(TestCase::new(
+    test_build_command(TestCase::new(
         "./examples/mix-nested-flat-structure",
         vec![
             "index.html",
@@ -33,7 +33,7 @@ fn test_mix_nested_flat_structure() -> Result<()> {
 
 #[test]
 fn test_blog() -> Result<()> {
-    build_tests(TestCase::new(
+    test_build_command(TestCase::new(
         "./examples/blog",
         vec![
             "index.html",
@@ -45,11 +45,11 @@ fn test_blog() -> Result<()> {
     ))
 }
 
-fn build_tests(test_case: TestCase) -> Result<()> {
+fn test_build_command(test_case: TestCase) -> Result<()> {
     let tmpdir = Temp::new_dir()?;
     let input_dir = Path::new(test_case.input_path).canonicalize()?;
     dir::copy(input_dir, &tmpdir, &CopyOptions::new().content_only(true)).unwrap();
-    favia::build(&tmpdir.to_path_buf())?;
+    favia::build(&tmpdir)?;
 
     for output_html in test_case.expected_html_outputs {
         let output_path = Path::new(&tmpdir.to_path_buf())

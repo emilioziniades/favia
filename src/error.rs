@@ -2,6 +2,8 @@ use std::{io, path::PathBuf};
 
 use thiserror::Error;
 
+pub type Result<T> = core::result::Result<T, Error>;
+
 #[derive(Error, Debug)]
 pub enum Error {
     // wrappers of other libraries' errors
@@ -23,5 +25,3 @@ pub enum Error {
     #[error("No factory template found for content file: {0}")]
     MissingTemplateFactory(PathBuf),
 }
-
-pub type Result<T> = core::result::Result<T, Error>;

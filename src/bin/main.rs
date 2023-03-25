@@ -26,21 +26,15 @@ async fn main() {
 
     let cwd = env::current_dir().unwrap();
 
-    match cli.command {
-        favia::Commands::Develop => favia::develop(&cwd).await.unwrap_or_else(|err| {
-            error!("{err:#?}");
-            // error!("{err}");
-            process::exit(1);
-        }),
-        favia::Commands::Build => favia::build(&cwd).unwrap_or_else(|err| {
-            error!("{err:#?}");
-            // error!("{err}");
-            process::exit(1);
-        }),
-        favia::Commands::New { name } => favia::new(&cwd, name).unwrap_or_else(|err| {
-            error!("{err:#?}");
-            // error!("{err}");
-            process::exit(1);
-        }),
-    }
+    let result = match cli.command {
+        favia::Commands::Develop => favia::develop(&cwd).await,
+        favia::Commands::Build => favia::build(&cwd),
+        favia::Commands::New { name: project_name } => favia::new(&cwd, project_name),
+    };
+
+    result.unwrap_or_else(|err| {
+        error!("{err}");
+        error!("{err:#?}");
+        process::exit(1);
+    })
 }

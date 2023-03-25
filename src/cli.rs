@@ -22,7 +22,7 @@ pub enum Commands {
     /// create a new favia project with the specified name
     New {
         /// project name
-        #[arg(long, short)]
+        #[command()]
         name: String,
     },
 }
