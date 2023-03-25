@@ -8,6 +8,7 @@ pub struct Directories {
     pub templates: path::PathBuf,
     pub content: path::PathBuf,
     pub build: path::PathBuf,
+    pub r#static: Option<path::PathBuf>,
 }
 
 impl Directories {
@@ -33,10 +34,18 @@ impl Directories {
         fs::create_dir(&build)?;
         debug!("build directory: {content:?}");
 
+        let r#static = cwd.join("static");
+        let r#static = if r#static.exists() {
+            Some(r#static)
+        } else {
+            None
+        };
+
         Ok(Self {
             templates,
             content,
             build,
+            r#static,
         })
     }
 

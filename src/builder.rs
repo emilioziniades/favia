@@ -104,6 +104,7 @@ impl Builder {
     pub fn build(&self) -> Result<()> {
         self.build_all_pages()?;
         self.generate_css()?;
+        self.copy_static_folder()?;
 
         Ok(())
     }
@@ -146,6 +147,17 @@ impl Builder {
 
     pub fn reload_templates(&mut self) -> Result<()> {
         self.tera.full_reload()?;
+        Ok(())
+    }
+
+    fn copy_static_folder(&self) -> Result<()> {
+        if let Some(static_folder) = &self.dirs.r#static {
+            fs_extra::dir::copy(
+                static_folder,
+                &self.dirs.build,
+                &fs_extra::dir::CopyOptions::new().content_only(true),
+            )?;
+        };
         Ok(())
     }
 }

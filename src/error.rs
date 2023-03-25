@@ -9,6 +9,8 @@ pub enum Error {
     // wrappers of other libraries' errors
     #[error(transparent)]
     Io(#[from] io::Error),
+    #[error(transparent)]
+    FileSystem(#[from] fs_extra::error::Error),
     #[error("Failed to parse Tera template: {0}")]
     Tera(#[from] tera::Error),
     #[error("Failed to parse TOML: {0}")]

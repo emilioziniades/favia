@@ -48,7 +48,7 @@ fn test_blog() -> Result<()> {
 fn test_build_command(test_case: TestCase) -> Result<()> {
     let tmpdir = Temp::new_dir()?;
     let input_dir = Path::new(test_case.input_path).canonicalize()?;
-    dir::copy(input_dir, &tmpdir, &CopyOptions::new().content_only(true)).unwrap();
+    dir::copy(input_dir, &tmpdir, &CopyOptions::new().content_only(true))?;
     favia::build(&tmpdir)?;
 
     for output_html in test_case.expected_html_outputs {
