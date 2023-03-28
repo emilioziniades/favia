@@ -1,6 +1,6 @@
 [package]
 name = "favia"
-version = "0.1.3"
+version = "0.1.4"
 edition = "2021"
 description = "Zero-config, content-oriented static site generator with tailwind built-in."
 license = "MIT"
