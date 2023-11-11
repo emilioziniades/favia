@@ -1,6 +1,6 @@
 # `favia` 🪸
 
-**NOTE: I am no longer developing this project. If you are looking for a static site generator written in Rust that has all the features described below and much, much, much more, I recommend you check out [zola](https://getzola.org). **
+**NOTE: I am no longer developing this project. If you are looking for a static site generator written in Rust that has all the features described below and much, much, much more, I recommend you check out [zola](https://getzola.org).**
 
 Sometimes I have some content, and I want to stick it into a website. I'd prefer not to wade into some JavaScript framework simply to glue content and html together. So I made `favia`.
 
