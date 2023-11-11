@@ -90,12 +90,17 @@ I also took the time to create some github issues, and strip the todos out of th
 
 I got very distracted and never continued this project.
 I think it's only fair that I yank all the releases from <https://crates.io> and update the README to reflect this.
+
 I think ultimately I got a basic version of the site generator working and that satisfied my itch.
 In hindsight, building a static site generator was an ambitious project, and I don't have enough passion to continue to improve this project.
+
+The other aim was to rebuild my personal website using my own static site generator. Actually all I want to do is rebuild my website, and there are already so many static site generators, that it didn't make much sense to continue with this project.
+
 Another issue was that I attempted to couple this project too tightly to tailwind. It is the CSS library du jour, but a SSG should not be so strongly opinionated that it admits only a single CSS library.
 This was a design flaw, and if I were to do this again, I would allow the architecture to be more modular, providing support for multiple CSS libraries, without tying the implementation directly to one.
+
 In reality, this project took a lot of inspiration from [zola](https://getzola.org) and in many ways is the same idea with a fraction of the features.
-The other aim was to rebuild my personal website using my own static site generator. Actually all I want to do is rebuild my website, and there are already so many static site generators, that it didn't make much sense to continue with this project.
 Any time I was going to spend on developing this project is better spent contributing to `zola`. The thing I love about open source is that there are positive externalities: the development effort of one person benefits all users of the project.
-Instead of trying to earn props by blatantly lifting ideas from other more popular open source projects, I now think my time is better said trying to improve those projects.
+Instead of trying to earn props by blatantly lifting ideas from other more popular open source projects, I now think my time is better spent trying to improve those projects.
+
 I doubt that this log will ever be read by anyone, but by writing this last entry, I have the closure I need to move on to projects that I have more passion in.
