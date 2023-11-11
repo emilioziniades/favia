@@ -2,7 +2,7 @@ use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
 #[command(author, version)]
-/// 🪸 favia: a zero config static site generator with tailwind built in
+/// 🪸 favia: a zero config static site generator
 pub struct Cli {
     #[command(subcommand)]
     /// favia subcommand to execute

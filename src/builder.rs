@@ -92,18 +92,8 @@ impl Builder {
         Ok(())
     }
 
-    fn all_template_files(&self) -> Vec<PathBuf> {
-        walkdir::WalkDir::new(&self.dirs.templates)
-            .into_iter()
-            .filter_map(|entry| entry.ok())
-            .filter(|entry| entry.file_type().is_file())
-            .map(|entry| entry.into_path())
-            .collect()
-    }
-
     pub fn build(&self) -> Result<()> {
         self.build_all_pages()?;
-        self.generate_css()?;
         self.copy_static_folder()?;
 
         Ok(())
@@ -118,29 +108,6 @@ impl Builder {
             let content_path = entry.path();
             self.build_content_file(content_path)?;
         }
-
-        Ok(())
-    }
-
-    fn generate_css(&self) -> Result<()> {
-        let css_file = self.build_folder().join("styles.css");
-        let css_file = css_file.to_str().unwrap();
-
-        let template_files = self.all_template_files();
-        let template_files = template_files
-            .iter()
-            .map(|file| railwind::SourceOptions {
-                input: file,
-                option: railwind::CollectionOptions::Html,
-            })
-            .collect();
-
-        railwind::parse_to_file(
-            railwind::Source::Files(template_files),
-            css_file,
-            false,
-            &mut vec![],
-        );
 
         Ok(())
     }

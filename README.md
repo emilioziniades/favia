@@ -1,10 +1,10 @@
 # `favia` 🪸
 
-_Still very much a work in progress_
+**NOTE: I am no longer developing this project. If you are looking for a static site generator written in Rust that has all the features described below and much, much, much more, I recommend you check out [zola](https://getzola.org). **
 
-Sometimes I have some content, and I want to stick it into a website. I'd prefer not to wade into some JavaScript framework simply to glue content and html together. I would especially prefer not to write css directly. So I made `favia`.
+Sometimes I have some content, and I want to stick it into a website. I'd prefer not to wade into some JavaScript framework simply to glue content and html together. So I made `favia`.
 
-`favia` is a lightweight static site generator written in Rust. It is zero-config, and has [Tailwind](https://tailwindcss.com/) built-in, with no nodejs dependency, thanks to the awesome [Railwind](https://github.com/pintariching/railwind) project. Simply describe your [Tera](https://tera.netlify.app/) templates with Tailwind utility classes, as well as your content in markdown, and `favia` stiches them together.
+`favia` is a lightweight static site generator written in Rust. It is zero-config. Simply describe your [Tera](https://tera.netlify.app/) templates, as well as your content in markdown, and `favia` stiches them together.
 
 ## quickstart
 

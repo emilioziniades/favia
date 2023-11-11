@@ -1,8 +1,8 @@
 [package]
 name = "favia"
-version = "0.1.4"
+version = "0.1.5"
 edition = "2021"
-description = "Zero-config, content-oriented static site generator with tailwind built-in."
+description = "Zero-config, content-oriented static site generator."
 license = "MIT"
 repository = "https://github.com/emilioziniades/favia"
 homepage = "https://github.com/emilioziniades/favia"
@@ -21,7 +21,6 @@ walkdir = "2"
 notify = "5.0.10"
 rocket = "0.5.0-rc.3"
 thiserror = "1.0"
-railwind = "0.1.5"
 fs_extra = "1.3.0"
 
 [dev-dependencies]
